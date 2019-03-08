@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/styles/style.css' />
+    <link rel='stylesheet' href='/styles/zxx.lib.css' />
+    <link rel='stylesheet' href='/js/dist/mobile.min.css?v=0.01' />
+    <link rel="shortcut icon" href="/images/favicon.ico?v=2.0">
+    <input type="hidden" id="type" value="<%= type %>">
+    <input type="hidden" id="param1" value="<%= param1 %>">
+    <input type="hidden" id="param2" value="<%= param2 %>">
+    <input type="hidden" id="param3" value="<%= param3 %>">
+    <input type="hidden" id="param4" value="<%= param4 %>">
+</head>
+<body>
+    <div id="app">
+        <app :type="type":param1="param1" :param2="param2" :param3="param3" :param4="param4"></app>
+    </div>
+
+    <script src="/js/dist/vendors.dll.js"></script>
+    <script src="/js/dist/mobile.bundle.js"></script>
+</body>
+</html>
