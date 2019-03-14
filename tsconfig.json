@@ -7,7 +7,9 @@
     "module": "es2015",
     "moduleResolution": "node",
     "target": "es5",
-    "lib": ["es2015", "es2017", "dom"]
+    "lib": ["es2015", "es2017", "dom"],
+    "experimentalDecorators": true,
+    "allowJs": true
   },
   "include": [
     "./public/**/*"

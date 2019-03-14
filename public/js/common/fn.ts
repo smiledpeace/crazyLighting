@@ -208,6 +208,7 @@ const api = {
         if (-1 < target.indexOf(window.location.host)) {
             return true;
         }
+        return false
     },
     // 创建 加密id
     // https://stackoverflow.com/a/2117523/535606
@@ -238,7 +239,9 @@ const api = {
         return typeof Ctor === "function" && fnToString.call(Ctor) === ObjectFunctionString;
     },
     getCss(o:any, key:any) {
-        return o.currentStyle ? o.currentStyle[key] : document.defaultView.getComputedStyle(o, false)[key];
+        if (document !== null && document.defaultView !== null ) {
+            return o.currentStyle ? o.currentStyle[key] : document.defaultView.getComputedStyle(o, null)[key];
+        }
     },
     checkEmail: function (email: string) {
         return email.match(/^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/)
@@ -284,7 +287,7 @@ const api = {
         var AA = ["零", "壹", "贰", "叁", "肆", "伍", "陆", "柒", "捌", "玖"];
         var BB = ["", "拾", "佰", "仟", "万", "億", "", ""];
         var BB_ = ["角", "分", "厘", ""];
-        var a = ("" + num).replace(/(^0*)/g, "").split("."), k = 0, re = "";
+        var a:any[] = ("" + num).replace(/(^0*)/g, "").split("."), k = 0, re = "";
         for (var i = a[0].length - 1; i >= 0; i--) {
             switch (k) {
                 case 0:
@@ -300,7 +303,7 @@ const api = {
                     k = 0;
                     break;
             }
-            if (k % 4 == 2 && a[0].charAt(i + 2) != 0 && a[0].charAt(i + 1) == 0) {
+            if (k % 4 == 2 && a[0].charAt(i + 2) !== 0 && a[0].charAt(i + 1) === 0) {
                 re = AA[0] + re
             }
             ;
@@ -338,7 +341,7 @@ const api = {
     //判断某值是否存在于对象类型数组的某属性
     hasvalue(obj: any, key: any, value: any) {
         let res = false;
-        api.each(obj, (item:any ) => {
+        api.each(obj, (item:any ):any => {
             if (item[key] && item[key] === value) {
                 res = true;
                 return false;
@@ -347,11 +350,11 @@ const api = {
         return res;
     },
     //判断对象是否包含某直接属性（非原型）
-    haskey(obj, key) {
-        return obj !== null && hasOwnProperty.call(obj, key);
+    haskey(obj: object, key: string) {
+        return obj !== null && hasOwn.call(obj, key);
     },
     //获取对象所有属性名
-    allkeys(obj) {
+    allkeys(obj: object) {
         if (!api.isobject(obj)) {
             return [];
         }
@@ -362,7 +365,7 @@ const api = {
         return keys;
     },
     //获取对象自有属性名（不包含原型属性）
-    keys(obj) {
+    keys(obj: object) {
         if (!api.isobject(obj)) {
             return [];
         }
@@ -378,8 +381,8 @@ const api = {
         return keys;
     },
     //获取对象自有属性值（数组）
-    values(obj) {
-        let keys = api.keys(obj),
+    values(obj: any) {
+        let keys: any[] = api.keys(obj),
             len = keys.length,
             i = 0,
             arr = Array(len);
@@ -388,56 +391,6 @@ const api = {
             arr[i] = obj[keys[i]];
         }
         return arr;
-    },
-    /**
-     * 计算返回值
-     * @param  {Object} item excel字段
-     * @return {String}      [description]
-     */
-    judgeExcel(item) {
-        if (!item.value) {
-            return '';
-        }
-        if (item.value.type == 28) {
-            return item.hint;
-        }
-        if (item.value.type == 4 || item.value.type == 19) {
-            if (item.value.files && item.value.files.length) {
-                let html = '';
-                item.value.files.forEach(file => {
-                    if (file.type == 'pic' || file.type == 1) {
-                        html += `<img src="${file.file_url}" onclick="window.rootVue.vm.$preview.showImgDetail(this)" style="width: 30px; height: 30px;cursor: pointer;"/> `
-                    } else {
-                        var name = file.file_name || file.title
-                        var url = name && `/newFilePreview?type=${name.split('.').pop()}&file_name=${name}&file_id=${file.file_id || file._id}`;
-                        html += `<a href="${url}" class="link">${name}</a>`
-                    }
-                })
-                return html
-            } else {
-                return '未填写'
-            }
-
-        }
-        if (item.value.value_name) {
-            return item.value.value_name;
-        }
-        if (item.value.value_names && item.value.value_names.length) {
-            return item.value.value_names[0];
-        }
-        if (item.value.value) {
-            return item.value.value;
-        }
-        if (item.value.values && item.value.values.length) {
-            return item.value.values[0];
-        }
-        if (item.value.files && item.value.files.length) {
-            return item.value.files;
-        }
-        if (item.value.table && item.value.table.length) {
-            return item.value.table.length + '项';
-        }
-        return '未填写'
     },
     sendNotice: function(type: any, timeout: any) {
         if (!type) {
@@ -470,7 +423,7 @@ const api = {
     //对象属性扩展覆盖（同jQuery/Angularjs）
     //放弃使用Object.assign, 因为Object.assign只能覆盖一层，不能深度扩展
     //return Object.assign.apply( (arguments.length > 0 ? arguments[0] : this), arguments);
-    extend: function (obj: object) {
+    extend: function (obj: any, deep?: any, copy?: any) {
         let len = arguments.length, idx = 1, isdeep = false;
         if (len < 2 || obj === null) {
             return obj;
@@ -550,27 +503,10 @@ const api = {
         }
         return dataset;
     },
-    //队列缓存对象生产器（返回一个缓存区对象）
-    createcache(maxlen: any) {
-        let keys: any[] = [];
-
-        function cache(key: any, value: any): any {
-            if (false !== maxlen && keys.push[key + ' '] > maxlen) {        //key加一个空格符，与原型属性做一下区分，避免原型属性被修改
-                delete cache[keys.shift()];
-            }
-            if ('undefined' !== typeof value) {
-                return (cache[key + ' '] = value);
-            } else {
-                return cache[key + ' '];
-            }
-        }
-
-        return cache;
-    },
     //降频处理器
-    later(fn, delay, immediate) {
-        let timer;
-        return function () {
+    later(fn: any, delay: number, immediate: boolean) {
+        let timer: any;
+        return function (this: void) {
             let context = this, args = arguments, callnow = immediate && !timer;
             clearTimeout(timer);
             timer = setTimeout(function () {
@@ -586,18 +522,18 @@ const api = {
     },
 
     //去掉字符串前后空格
-    trim(str) {
+    trim(str: string) {
         return 'undefined' !== typeof str.trim ? str.trim() : str.replace(/(^\s*)|(\s*$)/g, '');
     },
     //裁剪字符串
-    substr(str, start, len) {
+    substr(str: string, start: number, len: number) {
         str = String(str).toString();
         start = start || 0;
         len = len || str.length;
         return str.substr(start, len);
     },
     //前置补零
-    prefillzero(num, len) {
+    prefillzero(num: any, len: number) {
         num = num.toString();
         while (num.length < len) {
             num = '0' + num;
@@ -605,13 +541,13 @@ const api = {
         return num;
     },
     //获取文件后缀
-    sufix(url, islower = true) {
+    sufix(url: string, islower = true) {
         url = url.substr(url.lastIndexOf('.') + 1);
         return true === islower ? url.toLowerCase() : url.toUpperCase();
     },
 
     //字符串转日期
-    str2date(strdate) {
+    str2date(strdate: any) {
         let arr = strdate.split(/[- \/:]/g) || [];
         arr[0] = arr[0] || 1986;
         arr[1] = arr[1] || 6;
@@ -622,8 +558,8 @@ const api = {
         return new Date(arr[0], --arr[1], arr[2], arr[3], arr[4], arr[5]);
     },
     //日期格式化
-    fmtdate(date, fmt = 'yyyy-MM-dd hh:mm:ss') {
-        let o = {
+    fmtdate(date: any, fmt = 'yyyy-MM-dd hh:mm:ss') {
+        let o: any = {
             'M+': date.getMonth() + 1, //月份
             'd+': date.getDate(), //日
             'h+': date.getHours(), //小时
@@ -643,7 +579,7 @@ const api = {
         return fmt;
     },
     //获得日期对应的星期数
-    getweekday(date) {
+    getweekday(date: any) {
         let map = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
 
         if (api.isdate(date)) {
@@ -659,7 +595,7 @@ const api = {
         }
     },
     //获得日期对应的星期数
-    dateplus(date) {
+    dateplus(date: any) {
         if (api.isstring(date)) {
             date = api.str2date(date);
         }
@@ -683,7 +619,7 @@ const api = {
     // fmt = '+d5'; //五天后
     // fmt = '-M5'; //五个月前
     // fmt = '+M5'; //五个月后
-    adddate(date, fmt) {
+    adddate(date: any, fmt: string) {
         let dateplus, matchs, mothed, type, value;
         dateplus = api.dateplus(date);
 
@@ -721,7 +657,7 @@ const api = {
         }
     },
     //切换图片upyun尺寸
-    imagemode(url, mode) {
+    imagemode(url: any, mode: any) {
         if (!url || !mode) {
             return url;
         }
@@ -734,11 +670,11 @@ const api = {
         }
     },
     //筛选用户
-    queryusers(keywords, source) {
-        let res = [];
+    queryusers(keywords: any, source: any) {
+        let res: any[] = [];
         keywords = keywords.toUpperCase();
         if (keywords !== '') {
-            api.each(source, function (user, index) {
+            api.each(source, function (user: any, index: any): any {
                 if (user.nickname_en && -1 < user.nickname_en.replace('/,/g', '').toUpperCase().indexOf(keywords)) {
                     res.push(user);
                     return true;
@@ -750,16 +686,16 @@ const api = {
         }
         return res;
     },
-    formatDate(date, format) {
+    formatDate(date: any, format: string) {
         if (Object.prototype.toString.call(date) != '[object Date]') {
             date = new Date(date.replace(/-/g, "/"));
         }
-        var paddNum = function (num) {
+        var paddNum = function (num: any) {
             num += "";
             return num.replace(/^(\d)$/, "0$1");
         }
         //指定格式字符
-        var cfg = {
+        var cfg: any = {
             yyyy: date.getFullYear() //年 : 4位
             ,
             yy: date.getFullYear().toString().substring(2) //年 : 2位
@@ -778,44 +714,11 @@ const api = {
             mm: paddNum(date.getMinutes()) //分
             ,
             ss: paddNum(date.getSeconds()) //秒
-        }
+        };
         format || (format = "yyyy-MM-dd hh:mm:ss");
         return format.replace(/([a-z])(\1)*/ig, function (m) {
             return cfg[m];
         });
     },
-    /*//向pomelo服务器发送消息
-    send_comment( opt ) {
-        let params = {
-            httpType: 'post',
-            serviceName: 'task',
-            functionName: 'addComment',
-            user_id: '',
-            token: '',
-        };
-        if( opt.type ){
-            params.sub_type = opt.type;
-        }
-        if( opt.data ){
-            params.data = opt.data;
-        }
-
-        return api.ajax( false, params ).then(( res ) => {
-            if( res && res.result && 'TRUE'===res.result ) {
-
-            } else {
-                //
-            }
-        }, ( res ) => {
-            //
-        });
-    }*/
 };
-//扩展部分
-api.extend(api, {
-    //创建一个全局缓存队列
-    cache: api.createcache(false),
-});
-
-
 export default api;

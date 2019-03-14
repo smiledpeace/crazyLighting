@@ -1,8 +1,7 @@
 import Fn from './fn';
 const util = {};
-interface VPrototype { prototype: any; }
-const install = (Vue: VPrototype) => {
-  Vue.prototype.$fn = Fn;
+const install = (Vue: any) => {
+    Vue.prototype.$fn = Fn;
 };
 
 export default Object.assign(util, { install });

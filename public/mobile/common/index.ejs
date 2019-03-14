@@ -8,7 +8,7 @@
     <title><%= title %></title>
     <link rel='stylesheet' href='/styles/style.css' />
     <link rel='stylesheet' href='/styles/zxx.lib.css' />
-    <link rel='stylesheet' href='/js/dist/mobile.min.css?v=0.01' />
+    <!--<link rel='stylesheet' href='/js/dist/mobile.min.css?v=0.01' />-->
     <link rel="shortcut icon" href="/images/favicon.ico?v=2.0">
     <input type="hidden" id="type" value="<%= type %>">
     <input type="hidden" id="param1" value="<%= param1 %>">
@@ -19,6 +19,8 @@
 <body>
     <div id="app">
         <app :type="type":param1="param1" :param2="param2" :param3="param3" :param4="param4"></app>
+
+        <My-component></My-component>
     </div>
 
     <script src="/js/dist/vendors.dll.js"></script>
