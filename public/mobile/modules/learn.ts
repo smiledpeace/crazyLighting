@@ -8,6 +8,14 @@ import Vue from 'vue';
 import Component from 'vue-class-component';
 
 
+import EventEmitter from './emitter';
+
+const bus = new EventEmitter({});
+
+console.log(bus);
+bus.subscribe("mock event", (n: number) => {
+    console.log(n);
+});
 interface logLabel {
 
 }
@@ -27,4 +35,7 @@ export default class MyComponent extends Vue {
         window.alert(this.message)
     }
 }
+
+
+
 

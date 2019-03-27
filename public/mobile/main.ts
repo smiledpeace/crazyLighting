@@ -3,8 +3,10 @@ import App from './pages/index.vue';
 import vueUtil from '../js/common/vueUtil';
 Vue.use(vueUtil);
 import MyComponent from './modules/learn';
+import EventEmitter from './modules/emitter';
 
 console.log(MyComponent);
+console.log(EventEmitter);
 // require('../styles/mobile/index.less');
 const type = <HTMLInputElement>document.getElementById('type');
 const param1 = <HTMLInputElement>document.getElementById('param1');
@@ -12,6 +14,9 @@ const param2 = <HTMLInputElement>document.getElementById('param2');
 const param3 = <HTMLInputElement>document.getElementById('param3');
 const param4 = <HTMLInputElement>document.getElementById('param4');
 
+const m = new EventEmitter({});
+
+let val:number = 0;
 
 const vm = new Vue({
     el: '#app',
@@ -25,6 +30,8 @@ const vm = new Vue({
     },
     created() {
         console.log(this);
+        console.log(m);
+
     },
     components: {
         App,
@@ -68,3 +75,6 @@ let p1: Point = { x: 10, y: 20 };
 console.log(p1);
 
 // vm.log = mySquare;
+
+m.emit("mock event", 18);
+
