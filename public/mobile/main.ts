@@ -4,6 +4,8 @@ import vueUtil from '../js/common/vueUtil';
 Vue.use(vueUtil);
 import MyComponent from './modules/learn';
 import EventEmitter from './modules/emitter';
+import './modules/learn_class';
+import './less/index.less';
 
 console.log(MyComponent);
 console.log(EventEmitter);

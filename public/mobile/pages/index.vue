@@ -1,11 +1,21 @@
 <template>
-    <div>{{ data }}</div>
+    <div>
+        <p>{{ data }}</p>
+
+        <My-component text="Crazy Lighting"></My-component>
+
+        <Tab :items="items"></Tab>
+    </div>
 </template>
 <script>
+
+    import MyComponent from '../modules/learn';
+    import Tab from '../modules/tab';
     export default {
         data () {
             return {
-                data: '1'
+                data: '1',
+                items: ['FLYING', 'SLEEPING', 'EATING']
             }
         },
         created() {
@@ -17,6 +27,14 @@
             param2: '',
             param3: '',
             param4: ''
+        },
+        components: {
+            MyComponent,
+            Tab
         }
     }
 </script>
+
+<style lang="less">
+
+</style>

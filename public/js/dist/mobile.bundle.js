@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 9);
+/******/ 	return __webpack_require__(__webpack_require__.s = 11);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -12013,13 +12013,17 @@ module.exports = vendors_lib;
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(13)
+}
 var Component = __webpack_require__(4)(
   /* script */
-  __webpack_require__(5),
+  __webpack_require__(12),
   /* template */
   __webpack_require__(6),
   /* styles */
-  null,
+  injectStyle,
   /* scopeId */
   null,
   /* moduleIdentifier (server only) */
@@ -12407,28 +12411,160 @@ module.exports = function normalizeComponent (
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-__webpack_require__.r(__webpack_exports__);
-//
-//
-//
+/* unused harmony export Inject */
+/* unused harmony export Provide */
+/* unused harmony export Model */
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return Prop; });
+/* unused harmony export Watch */
+/* unused harmony export Emit */
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony reexport (default from non-harmony) */ __webpack_require__.d(__webpack_exports__, "c", function() { return vue__WEBPACK_IMPORTED_MODULE_0___default.a; });
+/* harmony import */ var vue_class_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3);
+/* harmony import */ var vue_class_component__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vue_class_component__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony reexport (default from non-harmony) */ __webpack_require__.d(__webpack_exports__, "a", function() { return vue_class_component__WEBPACK_IMPORTED_MODULE_1___default.a; });
+/** vue-property-decorator verson 8.1.0 MIT LICENSE copyright 2018 kaorun343 */
+/// <reference types='reflect-metadata'/>
 
-/* harmony default export */ __webpack_exports__["default"] = ({
-    data () {
-        return {
-            data: '1'
+
+
+
+/**
+ * decorator of an inject
+ * @param from key
+ * @return PropertyDecorator
+ */
+function Inject(options) {
+    return Object(vue_class_component__WEBPACK_IMPORTED_MODULE_1__["createDecorator"])(function (componentOptions, key) {
+        if (typeof componentOptions.inject === 'undefined') {
+            componentOptions.inject = {};
         }
-    },
-    created() {
-        var x = this.$fn.uuid();
-        console.log(x);
-    },
-    props: {
-        param1: '',
-        param2: '',
-        param3: '',
-        param4: ''
+        if (!Array.isArray(componentOptions.inject)) {
+            componentOptions.inject[key] = options || key;
+        }
+    });
+}
+/**
+ * decorator of a provide
+ * @param key key
+ * @return PropertyDecorator | void
+ */
+function Provide(key) {
+    return Object(vue_class_component__WEBPACK_IMPORTED_MODULE_1__["createDecorator"])(function (componentOptions, k) {
+        var provide = componentOptions.provide;
+        if (typeof provide !== 'function' || !provide.managed) {
+            var original_1 = componentOptions.provide;
+            provide = componentOptions.provide = function () {
+                var rv = Object.create((typeof original_1 === 'function' ? original_1.call(this) : original_1) || null);
+                for (var i in provide.managed)
+                    rv[provide.managed[i]] = this[i];
+                return rv;
+            };
+            provide.managed = {};
+        }
+        provide.managed[k] = key || k;
+    });
+}
+/** @see {@link https://github.com/vuejs/vue-class-component/blob/master/src/reflect.ts} */
+var reflectMetadataIsSupported = typeof Reflect !== 'undefined' && typeof Reflect.getMetadata !== 'undefined';
+function applyMetadata(options, target, key) {
+    if (reflectMetadataIsSupported) {
+        if (!Array.isArray(options) && typeof options !== 'function' && typeof options.type === 'undefined') {
+            options.type = Reflect.getMetadata('design:type', target, key);
+        }
     }
-});
+}
+/**
+ * decorator of model
+ * @param  event event name
+ * @param options options
+ * @return PropertyDecorator
+ */
+function Model(event, options) {
+    if (options === void 0) { options = {}; }
+    return function (target, key) {
+        applyMetadata(options, target, key);
+        Object(vue_class_component__WEBPACK_IMPORTED_MODULE_1__["createDecorator"])(function (componentOptions, k) {
+            (componentOptions.props || (componentOptions.props = {}))[k] = options;
+            componentOptions.model = { prop: k, event: event || k };
+        })(target, key);
+    };
+}
+/**
+ * decorator of a prop
+ * @param  options the options for the prop
+ * @return PropertyDecorator | void
+ */
+function Prop(options) {
+    if (options === void 0) { options = {}; }
+    return function (target, key) {
+        applyMetadata(options, target, key);
+        Object(vue_class_component__WEBPACK_IMPORTED_MODULE_1__["createDecorator"])(function (componentOptions, k) {
+            (componentOptions.props || (componentOptions.props = {}))[k] = options;
+        })(target, key);
+    };
+}
+/**
+ * decorator of a watch function
+ * @param  path the path or the expression to observe
+ * @param  WatchOption
+ * @return MethodDecorator
+ */
+function Watch(path, options) {
+    if (options === void 0) { options = {}; }
+    var _a = options.deep, deep = _a === void 0 ? false : _a, _b = options.immediate, immediate = _b === void 0 ? false : _b;
+    return Object(vue_class_component__WEBPACK_IMPORTED_MODULE_1__["createDecorator"])(function (componentOptions, handler) {
+        if (typeof componentOptions.watch !== 'object') {
+            componentOptions.watch = Object.create(null);
+        }
+        var watch = componentOptions.watch;
+        if (typeof watch[path] === 'object' && !Array.isArray(watch[path])) {
+            watch[path] = [watch[path]];
+        }
+        else if (typeof watch[path] === 'undefined') {
+            watch[path] = [];
+        }
+        watch[path].push({ handler: handler, deep: deep, immediate: immediate });
+    });
+}
+// Code copied from Vue/src/shared/util.js
+var hyphenateRE = /\B([A-Z])/g;
+var hyphenate = function (str) { return str.replace(hyphenateRE, '-$1').toLowerCase(); };
+/**
+ * decorator of an event-emitter function
+ * @param  event The name of the event
+ * @return MethodDecorator
+ */
+function Emit(event) {
+    return function (_target, key, descriptor) {
+        key = hyphenate(key);
+        var original = descriptor.value;
+        descriptor.value = function emitter() {
+            var _this = this;
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i] = arguments[_i];
+            }
+            var emit = function (returnValue) {
+                if (returnValue !== undefined)
+                    args.unshift(returnValue);
+                _this.$emit.apply(_this, [event || key].concat(args));
+            };
+            var returnValue = original.apply(this, args);
+            if (isPromise(returnValue)) {
+                returnValue.then(function (returnValue) {
+                    emit(returnValue);
+                });
+            }
+            else {
+                emit(returnValue);
+            }
+        };
+    };
+}
+function isPromise(obj) {
+    return obj instanceof Promise || (obj && typeof obj.then === 'function');
+}
 
 
 /***/ }),
@@ -12436,7 +12572,15 @@ __webpack_require__.r(__webpack_exports__);
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', [_vm._v(_vm._s(_vm.data))])
+  return _c('div', [_c('p', [_vm._v(_vm._s(_vm.data))]), _vm._v(" "), _c('My-component', {
+    attrs: {
+      "text": "Crazy Lighting"
+    }
+  }), _vm._v(" "), _c('Tab', {
+    attrs: {
+      "items": _vm.items
+    }
+  })], 1)
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {}
@@ -12455,6 +12599,107 @@ module.exports = (__webpack_require__(1))(11);
 
 /***/ }),
 /* 9 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var vue_property_decorator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5);
+/**
+ * TypeScript的核心原则之一是对值所具有的结构进行类型检查。它有时被称做“鸭式辨型法”或“结构性子类型化”。
+ * 在TypeScript里，接口的作用就是为这些类型命名和为你的代码或第三方代码定义契约。
+ */
+var __extends = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+
+var MyComponent = /** @class */ (function (_super) {
+    __extends(MyComponent, _super);
+    function MyComponent() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        // 初始数据可以直接声明为实例的属性
+        _this.message = 'Hello!';
+        _this.items = ['Crazy Lighting', 2, 45, 6];
+        return _this;
+    }
+    // 组件方法也可以直接声明为实例的方法
+    MyComponent.prototype.onClick = function () {
+        window.alert(this.message);
+    };
+    MyComponent.prototype.created = function () {
+        this.message = this.text;
+    };
+    MyComponent.prototype.computed = function () {
+    };
+    __decorate([
+        Object(vue_property_decorator__WEBPACK_IMPORTED_MODULE_0__[/* Prop */ "b"])(String)
+    ], MyComponent.prototype, "text", void 0);
+    MyComponent = __decorate([
+        Object(vue_property_decorator__WEBPACK_IMPORTED_MODULE_0__[/* Component */ "a"])({
+            // 所有的组件选项都可以放在这里
+            template: "\n        <div>\n            <strong v-for=\"item in items\">{{ item }}</strong>\n            <input type=\"text\">\n            <button @click=\"onClick\">{{ text }}</button>\n        </div>\n    "
+        })
+    ], MyComponent);
+    return MyComponent;
+}(vue_property_decorator__WEBPACK_IMPORTED_MODULE_0__[/* Vue */ "c"]));
+/* harmony default export */ __webpack_exports__["a"] = (MyComponent);
+
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var Animal = /** @class */ (function () {
+    function Animal(theName) {
+        this.name = theName;
+    }
+    return Animal;
+}());
+var Dog = /** @class */ (function (_super) {
+    __extends(Dog, _super);
+    function Dog() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    Dog.prototype.move = function () {
+        console.log(this.name);
+    };
+    return Dog;
+}(Animal));
+var myDog = new Dog('WangWang');
+console.log(myDog.move());
+
+
+/***/ }),
+/* 11 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -13186,9 +13431,8 @@ var install = function (Vue) {
 };
 /* harmony default export */ var vueUtil = (Object.assign(util, { install: install }));
 
-// EXTERNAL MODULE: ./node_modules/vue-class-component/dist/vue-class-component.common.js
-var vue_class_component_common = __webpack_require__(3);
-var vue_class_component_common_default = /*#__PURE__*/__webpack_require__.n(vue_class_component_common);
+// EXTERNAL MODULE: ./public/mobile/modules/learn.ts
+var learn = __webpack_require__(9);
 
 // CONCATENATED MODULE: ./public/mobile/modules/emitter.ts
 /**
@@ -13234,59 +13478,11 @@ var Cyclops = /** @class */ (function () {
 }());
 /* harmony default export */ var emitter = (Cyclops);
 
-// CONCATENATED MODULE: ./public/mobile/modules/learn.ts
-/**
- * TypeScript的核心原则之一是对值所具有的结构进行类型检查。它有时被称做“鸭式辨型法”或“结构性子类型化”。
- * 在TypeScript里，接口的作用就是为这些类型命名和为你的代码或第三方代码定义契约。
- */
-var __extends = (undefined && undefined.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
+// EXTERNAL MODULE: ./public/mobile/modules/learn_class.ts
+var learn_class = __webpack_require__(10);
 
-
-
-var bus = new emitter({});
-console.log(bus);
-bus.subscribe("mock event", function (n) {
-    console.log(n);
-});
-var learn_MyComponent = /** @class */ (function (_super) {
-    __extends(MyComponent, _super);
-    function MyComponent() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        // 初始数据可以直接声明为实例的属性
-        _this.message = 'Hello!';
-        return _this;
-    }
-    // 组件方法也可以直接声明为实例的方法
-    MyComponent.prototype.onClick = function () {
-        window.alert(this.message);
-    };
-    MyComponent = __decorate([
-        vue_class_component_common_default()({
-            // 所有的组件选项都可以放在这里
-            template: '<button @click="onClick">Click!</button>',
-        })
-    ], MyComponent);
-    return MyComponent;
-}(vue_default.a));
-/* harmony default export */ var learn = (learn_MyComponent);
+// EXTERNAL MODULE: ./public/mobile/less/index.less
+var less = __webpack_require__(18);
 
 // CONCATENATED MODULE: ./public/mobile/main.ts
 
@@ -13295,7 +13491,9 @@ var learn_MyComponent = /** @class */ (function (_super) {
 vue_default.a.use(vueUtil);
 
 
-console.log(learn);
+
+
+console.log(learn["a" /* default */]);
 console.log(emitter);
 // require('../styles/mobile/index.less');
 var type = document.getElementById('type');
@@ -13321,7 +13519,7 @@ var vm = new vue_default.a({
     },
     components: {
         App: pages_default.a,
-        MyComponent: learn
+        MyComponent: learn["a" /* default */]
     }
 });
 function createSquare(config) {
@@ -13342,6 +13540,138 @@ console.log(p1);
 // vm.log = mySquare;
 m.emit("mock event", 18);
 
+
+/***/ }),
+/* 12 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+
+// EXTERNAL MODULE: ./public/mobile/modules/learn.ts
+var learn = __webpack_require__(9);
+
+// EXTERNAL MODULE: ./node_modules/vue-property-decorator/lib/vue-property-decorator.js
+var vue_property_decorator = __webpack_require__(5);
+
+// CONCATENATED MODULE: ./public/mobile/modules/tab.ts
+var __extends = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+
+var tab_MyComponent = /** @class */ (function (_super) {
+    __extends(MyComponent, _super);
+    function MyComponent() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        // 初始数据可以直接声明为实例的属性
+        _this.message = 'Hello!';
+        _this.curItem = '';
+        _this.nowActive = 0;
+        return _this;
+    }
+    // 组件方法也可以直接声明为实例的方法
+    MyComponent.prototype.onClick = function (evt, item) {
+        console.log();
+        var el = evt.target;
+        this.nowActive = el.offsetWidth;
+        this.curItem = item;
+        this.computedActive();
+    };
+    MyComponent.prototype.computedActive = function () {
+        // $(this.$refs.itemwrap).animate({
+        //     scrollLeft: this.nowActive * 80 / 2
+        // }, 300)
+        var el = this.$refs.slide;
+        var offset = el.offsetWidth;
+        console.log(el.style);
+        el.style.setProperty('--underline-left', "-" + (offset - this.nowActive) + "px");
+    };
+    MyComponent.prototype.created = function () {
+    };
+    MyComponent.prototype.computed = function () {
+    };
+    __decorate([
+        Object(vue_property_decorator["b" /* Prop */])(Array)
+    ], MyComponent.prototype, "items", void 0);
+    MyComponent = __decorate([
+        Object(vue_property_decorator["a" /* Component */])({
+            // 所有的组件选项都可以放在这里
+            template: "\n        <div class=\"tab-header\" flex=\"cross:center\" ref=\"slide\">\n            <button class=\"tab-item\" v-for=\"item in items\" :class=\"{active: item === curItem}\"  @click=\"onClick($event, item)\">\n                <span class=\"tab-item--content\">\n                    <span class=\"tab-item--label\">{{ item }}</span>\n                </span>\n                <span class=\"tab-item--indicator\">\n                    <span class=\"tab-item--underline\" ></span>\n                </span>\n                <span class=\"tab-item--ripple \"></span>\n            </button>\n        </div>\n    "
+        })
+    ], MyComponent);
+    return MyComponent;
+}(vue_property_decorator["c" /* Vue */]));
+/* harmony default export */ var tab = (tab_MyComponent);
+
+// CONCATENATED MODULE: ./node_modules/vue-loader/lib/selector.js?type=script&index=0!./public/mobile/pages/index.vue
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+
+/* harmony default export */ var pages = __webpack_exports__["default"] = ({
+    data () {
+        return {
+            data: '1',
+            items: ['FLYING', 'SLEEPING', 'EATING']
+        }
+    },
+    created() {
+        var x = this.$fn.uuid();
+        console.log(x);
+    },
+    props: {
+        param1: '',
+        param2: '',
+        param3: '',
+        param4: ''
+    },
+    components: {
+        MyComponent: learn["a" /* default */],
+        Tab: tab
+    }
+});
+
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 14 */,
+/* 15 */,
+/* 16 */,
+/* 17 */,
+/* 18 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
 
 /***/ })
 /******/ ]);
