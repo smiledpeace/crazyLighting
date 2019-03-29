@@ -47,7 +47,7 @@ export default class Cyclops {
      */
 
     public emit(name: string, ...args: any[]) {
-        console.log(this.events[name]);
+        // console.log(this.events[name]);
         (this.events[name] || []).forEach(fn => fn(...args));
     }
 

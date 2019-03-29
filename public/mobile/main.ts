@@ -7,8 +7,8 @@ import EventEmitter from './modules/emitter';
 import './modules/learn_class';
 import './less/index.less';
 
-console.log(MyComponent);
-console.log(EventEmitter);
+// console.log(MyComponent);
+// console.log(EventEmitter);
 // require('../styles/mobile/index.less');
 const type = <HTMLInputElement>document.getElementById('type');
 const param1 = <HTMLInputElement>document.getElementById('param1');
@@ -31,8 +31,8 @@ const vm = new Vue({
         log: ''
     },
     created() {
-        console.log(this);
-        console.log(m);
+        // console.log(this);
+        // console.log(m);
 
     },
     components: {
@@ -62,7 +62,7 @@ function createSquare(config: SquareConfig) {
     return newSquare;
 }
 let mySquare = createSquare({color: 'red'});
-console.log(mySquare);
+// console.log(mySquare);
 
 /**
  * 一些对象属性只能在对象刚刚创建的时候修改其值
@@ -74,7 +74,7 @@ interface Point  {
 
 let p1: Point = { x: 10, y: 20 };
 
-console.log(p1);
+// console.log(p1);
 
 // vm.log = mySquare;
 

@@ -20,7 +20,7 @@
         },
         created() {
             var x = this.$fn.uuid();
-            console.log(x);
+            // console.log(x);
         },
         props: {
             param1: '',
